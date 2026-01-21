@@ -15,8 +15,12 @@
                 <input type="text" id="city-input" placeholder="Search city..." aria-describedby="search-help">
                 <button id="search-btn" aria-label="Search for weather"><i class="fas fa-search" ></i></button>
             </div>
-            <label id="search-help" class="sr-only">Use my location</label>
-            <button id="geo-btn" title="Use my location" aria-label="Get weather for current location"><i class="fas fa-location-crosshairs" aria-hidden="true"></i></button>
+            <div class="location-box">
+                <button id="geo-btn" title="Click to use your current location" aria-label="Get weather for current location">
+                    <i class="fas fa-location-crosshairs" aria-hidden="true"></i>
+                    <span>Use my current location</span>
+                </button>
+            </div>
         </header>
 
         <main id="weather-display" class="hidden" aria-live="polite" aria-atomic="true">

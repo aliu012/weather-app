@@ -45,9 +45,9 @@ body {
 /* Header and Search */
 header {
     display: flex;
+    flex-direction: column;
     gap: 10px;
     margin-bottom: 2rem;
-    align-items: stretch;
 }
 
 .search-box {
@@ -91,15 +91,23 @@ input:focus {
     background: #e9ecef;
 }
 
+.location-box {
+    display: flex;
+}
+
 #geo-btn {
+    flex: 1;
     border-radius: var(--border-radius);
     background: var(--primary);
     color: white;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 500;
 }
 
 #geo-btn:hover {
     background: var(--primary-hover);
-    transform: scale(1.05);
+    transform: scale(1.02);
 }
 
 #geo-btn:active,
