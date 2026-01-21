@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WeatherSky | Real-time Forecast</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container" role="main" aria-label="Weather Application">
+        <header role="banner">
+            <div class="search-box">
+                <label for="city-input" class="sr-only">Enter city name</label>
+                <input type="text" id="city-input" placeholder="Search city..." aria-describedby="search-help">
+                <button id="search-btn" aria-label="Search for weather"><i class="fas fa-search" ></i></button>
+            </div>
+            <label id="search-help" class="sr-only">Use my location</label>
+            <button id="geo-btn" title="Use my location" aria-label="Get weather for current location"><i class="fas fa-location-crosshairs" aria-hidden="true"></i></button>
+        </header>
+
+        <main id="weather-display" class="hidden" aria-live="polite" aria-atomic="true">
+            <section class="current-weather" aria-labelledby="current-weather-heading">
+                <h1 id="city-name" aria-live="assertive">City Name</h1>
+                <div class="weather-main">
+                    <img id="weather-icon" src="" alt="weather icon" role="img">
+                    <span id="temp" aria-label="Current temperature">--°C</span>
+                </div>
+                <p id="description" aria-live="assertive">Description</p>
+                <div class="details" role="list" aria-label="Weather details">
+                    <span role="listitem"><i class="fas fa-droplet" aria-hidden="true"></i> Humidity: <b id="humidity">--%</b></span>
+                    <span role="listitem"><i class="fas fa-wind" aria-hidden="true"></i> Wind: <b id="wind">-- km/h</b></span>
+                </div>
+            </section>
+
+            <section class="forecast" aria-labelledby="forecast-heading">
+                <h3 id="forecast-heading">5-Day Forecast</h3>
+                <div id="forecast-container" class="forecast-grid" role="list" aria-label="5-day weather forecast"></div>
+            </section>
+        </main>
+
+        <div id="loading" class="state-msg hidden" role="status" aria-live="assertive">
+            <div class="spinner" aria-hidden="true"></div>
+            <p>Fetching weather...</p>
+        </div>
+        <div id="error-msg" class="state-msg hidden" role="alert" aria-live="assertive">
+            <i class="fas fa-triangle-exclamation" aria-hidden="true"></i>
+            <p id="error-text">City not found. Please try again.</p>
+        </div>
+    </div>
+
+    <script src="script.js" type="module"></script>
+</body>
+</html>
