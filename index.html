@@ -10,10 +10,15 @@
 <body>
     <div class="app-container" role="main" aria-label="Weather Application">
         <header role="banner">
-            <div class="search-box">
-                <label for="city-input" class="sr-only">Enter city name</label>
-                <input type="text" id="city-input" placeholder="Search city..." aria-describedby="search-help">
-                <button id="search-btn" aria-label="Search for weather"><i class="fas fa-search" ></i></button>
+            <div class="header-top">
+                <div class="search-box">
+                    <label for="city-input" class="sr-only">Enter city name</label>
+                    <input type="text" id="city-input" placeholder="Search city..." aria-describedby="search-help">
+                    <button id="search-btn" aria-label="Search for weather"><i class="fas fa-search" ></i></button>
+                </div>
+                <button id="unit-toggle" class="unit-toggle" aria-label="Toggle temperature unit between Celsius and Fahrenheit">
+                    <span class="unit-text">°C</span>
+                </button>
             </div>
             <div class="separator">
                 <span>or</span>

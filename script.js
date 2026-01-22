@@ -1,6 +1,14 @@
 
 import CONFIG from './config.js';
 
+// Temperature Unit Management
+const UNITS = {
+    CELSIUS: 'metric',
+    FAHRENHEIT: 'imperial'
+};
+
+let currentUnit = localStorage.getItem('tempUnit') || UNITS.CELSIUS;
+
 // Application UI States - controls which elements are visible
 const STATES = {
     LOADING: 'loading',   // Show loading spinner while fetching data
@@ -13,6 +21,8 @@ const elements = {
     cityInput: document.querySelector('#city-input'),
     searchBtn: document.querySelector('#search-btn'),
     geoBtn: document.querySelector('#geo-btn'),
+    unitToggle: document.querySelector('#unit-toggle'),
+    unitText: document.querySelector('.unit-text'),
     weatherDisplay: document.querySelector('#weather-display'),
     loading: document.querySelector('#loading'),
     errorMsg: document.querySelector('#error-msg'),
@@ -35,8 +45,8 @@ const elements = {
  */
 async function fetchWeather(query, isCoords = false) {
     const url = isCoords
-        ? `${CONFIG.BASE_URL}/weather?lat=${query.lat}&lon=${query.lon}&units=${CONFIG.UNITS}&appid=${CONFIG.API_KEY}`
-        : `${CONFIG.BASE_URL}/weather?q=${encodeURIComponent(query)}&units=${CONFIG.UNITS}&appid=${CONFIG.API_KEY}`;
+        ? `${CONFIG.BASE_URL}/weather?lat=${query.lat}&lon=${query.lon}&units=${currentUnit}&appid=${CONFIG.API_KEY}`
+        : `${CONFIG.BASE_URL}/weather?q=${encodeURIComponent(query)}&units=${currentUnit}&appid=${CONFIG.API_KEY}`;
 
     const response = await fetch(url);
     if (!response.ok) {
@@ -52,7 +62,7 @@ async function fetchWeather(query, isCoords = false) {
  * @returns {Promise<Array>} Filtered daily forecast data
  */
 async function fetchForecast(lat, lon) {
-    const url = `${CONFIG.BASE_URL}/forecast?lat=${lat}&lon=${lon}&units=${CONFIG.UNITS}&appid=${CONFIG.API_KEY}`;
+    const url = `${CONFIG.BASE_URL}/forecast?lat=${lat}&lon=${lon}&units=${currentUnit}&appid=${CONFIG.API_KEY}`;
     const response = await fetch(url);
     if (!response.ok) {
         throw new Error('Unable to fetch forecast data');
@@ -70,10 +80,12 @@ async function fetchForecast(lat, lon) {
  */
 function displayCurrentWeather(data) {
     elements.cityName.textContent = data.name;
-    elements.temp.textContent = `${Math.round(data.main.temp)}°C`;
+    const tempSymbol = currentUnit === UNITS.CELSIUS ? '°C' : '°F';
+    const windUnit = currentUnit === UNITS.CELSIUS ? 'km/h' : 'mph';
+    elements.temp.textContent = `${Math.round(data.main.temp)}${tempSymbol}`;
     elements.description.textContent = data.weather[0].description;
     elements.humidity.textContent = `${data.main.humidity}%`;
-    elements.wind.textContent = `${data.wind.speed} km/h`;
+    elements.wind.textContent = `${Math.round(data.wind.speed)} ${windUnit}`;
     elements.weatherIcon.src = `${CONFIG.ICON_URL}/${data.weather[0].icon}@2x.png`;
     elements.weatherIcon.alt = data.weather[0].description;
 }
@@ -84,6 +96,7 @@ function displayCurrentWeather(data) {
  */
 function displayForecast(days) {
     elements.forecastContainer.innerHTML = '';
+    const tempSymbol = currentUnit === UNITS.CELSIUS ? '°C' : '°F';
 
     days.forEach(day => {
         const date = new Date(day.dt * 1000).toLocaleDateString('en', { weekday: 'short' });
@@ -92,7 +105,7 @@ function displayForecast(days) {
         card.innerHTML = `
             <div>${date}</div>
             <img src="${CONFIG.ICON_URL}/${day.weather[0].icon}.png" alt="${day.weather[0].description}">
-            <div>${Math.round(day.main.temp)}°</div>
+            <div>${Math.round(day.main.temp)}${tempSymbol}</div>
         `;
         elements.forecastContainer.appendChild(card);
     });
@@ -228,12 +241,39 @@ function handleKeyPress(event) {
     }
 }
 
+/**
+ * Handles unit toggle click
+ */
+function handleUnitToggle() {
+    // Toggle between Celsius and Fahrenheit
+    currentUnit = currentUnit === UNITS.CELSIUS ? UNITS.FAHRENHEIT : UNITS.CELSIUS;
+    
+    // Save preference to localStorage
+    localStorage.setItem('tempUnit', currentUnit);
+    
+    // Update button text
+    elements.unitText.textContent = currentUnit === UNITS.CELSIUS ? '°C' : '°F';
+    
+    // Re-fetch and display current weather if already displayed
+    if (!elements.weatherDisplay.classList.contains('hidden')) {
+        // Get the current city from the display
+        const cityName = elements.cityName.textContent;
+        if (cityName && cityName !== 'City Name') {
+            performWeatherSearch(cityName);
+        }
+    }
+}
+
 // --- Initialization ---
 function init() {
     // Event listeners
     elements.searchBtn.addEventListener('click', handleSearch);
     elements.geoBtn.addEventListener('click', handleGeolocation);
     elements.cityInput.addEventListener('keypress', handleKeyPress);
+    elements.unitToggle.addEventListener('click', handleUnitToggle);
+    
+    // Set initial unit button text
+    elements.unitText.textContent = currentUnit === UNITS.CELSIUS ? '°C' : '°F';
     
     // Initial state
     toggleState(STATES.DISPLAY); // Show empty weather display initially
